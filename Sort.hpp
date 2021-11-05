@@ -1,9 +1,12 @@
 #pragma once
 #include <iostream>
+#include <chrono>
+#include <fstream>
 #include "Sequence.hpp"
 #include "ArraySequence.hpp"
 #include "ListSequence.hpp"
 using namespace std;
+using namespace std::chrono;
 
 // template <class T>
 // class ISorter
@@ -19,12 +22,12 @@ class ArraySorter
 {
 public:
     // QUICK
-    T partition(Sequence<T> *arr, unsigned int low, unsigned int high, bool (*function)(T data, T value))
+    T partition(Sequence<T> *arr, int low, int high, bool (*function)(T data, T value))
     {
         T pivot;
         pivot = arr->get(high);
-        unsigned int i = low - 1;
-        for (unsigned int j = i + 1; j <= high - 1; j++)
+        int i = low - 1;
+        for (int j = i + 1; j <= high - 1; j++)
         {
             if (function(arr->get(j), pivot))
             {
@@ -37,7 +40,7 @@ public:
     }
 
     // const T& data,const T& value
-    void _quickSort(Sequence<T> *arr, unsigned int low, unsigned int high, bool (*function)(T data, T value)) // iterator
+    void _quickSort(Sequence<T> *arr, int low, int high, bool (*function)(T data, T value)) // iterator
     {
         if (low <= high)
         {
@@ -50,18 +53,19 @@ public:
 
     void quickSort(Sequence<T> *arr, bool (*function)(T data, T value))
     {
-        _quickSort(arr, 0, arr->getSize() - 1, function);
+        int n = arr->getSize();
+        _quickSort(arr, 0, n - 1, function);
     }
 
     // SHELL
     void shellSort(Sequence<T> *arr, bool (*function)(T data, T value))
     {
-        unsigned int n = arr->getSize();
-        for (unsigned int gap = n / 2; gap > 0; gap /= 2)
+        int n = arr->getSize();
+        for (int gap = n / 2; gap > 0; gap /= 2)
         {
-            for (unsigned int i = gap; i < n; i++)
+            for (int i = gap; i < n; i++)
             {
-                for (unsigned int j = gap; j >= gap && function(arr->get(j), arr->get(j - gap)); j -= gap)
+                for (int j = gap; j >= gap && function(arr->get(j), arr->get(j - gap)); j -= gap)
                 {
                     arr->swap(j, j - gap);
                 }
@@ -72,11 +76,11 @@ public:
     // MERGE
     void merge(Sequence<T> *left, Sequence<T> *right, Sequence<T> *bars, bool (*function)(T data, T value))
     {
-        unsigned int nL = left->getSize();
-        unsigned int nR = right->getSize();
-        unsigned int i = 0;
-        unsigned int leftLoop = 0;
-        unsigned int rightLoop = 0;
+        int nL = left->getSize();
+        int nR = right->getSize();
+        int i = 0;
+        int leftLoop = 0;
+        int rightLoop = 0;
 
         while (leftLoop < nL && rightLoop < nR)
         {
@@ -113,9 +117,9 @@ public:
             return;
         }
 
-        unsigned int mid = bar->getSize() / 2;
-        Sequence<T>* left = new ArraySequence<T>();
-        Sequence<T>* right = new ArraySequence<T>();
+        int mid = bar->getSize() / 2;
+        Sequence<T> *left = new ArraySequence<T>();
+        Sequence<T> *right = new ArraySequence<T>();
 
         for (size_t j = 0; j < mid; ++j)
         {
@@ -131,9 +135,26 @@ public:
         mergeSort(right, function);
         merge(left, right, bar, function);
     }
+
+    void running_time(bool (*function)(T data, T value))
+    {
+        ofstream myfile;
+        myfile.open("running_time_mergeSort.txt");
+        myfile << "Running time of Merge sorting: \n";
+        for (int i = 10; i <= 10000; i += 100)
+        {
+            Sequence<T> *sequence = new ArraySequence<T>();
+            sequence->generator(i);
+            auto start = high_resolution_clock::now();
+            mergeSort(sequence, function);
+            auto stop = high_resolution_clock::now();
+            auto duration = duration_cast<microseconds>(stop - start);
+            myfile << duration.count() << "\n";
+        }
+    }
 };
 
-//LIST SEQUENCE
+// LIST SEQUENCE
 template <class T>
 class ListSorter
 {
@@ -222,9 +243,7 @@ public:
 
     void shellSort(ListSequence<T> *list, bool (*function)(T data, T value))
     {
-        
     }
-
 };
 
 template <class T>

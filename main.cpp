@@ -1,26 +1,24 @@
 #include <iostream>
+#include <chrono>
 #include "Sequence.hpp"
 #include "ArraySequence.hpp"
 #include "ListSequence.hpp"
 #include "Sort.hpp"
 using namespace std;
+using namespace std::chrono;
 
 int main()
 {
-    Sequence<unsigned int> *sq = new ArraySequence<unsigned int>();
-    sq->generator(100);
-    sq->print();
-    ArraySorter<unsigned int> *sort = new ArraySorter<unsigned int>();
-    sort->mergeSort(sq, descending);
-    cout << "\nAfter\n";
-    sq->print();
+    Sequence<int> *sq = new ArraySequence<int>();
+    ArraySorter<int> *sort = new ArraySorter<int>();
+    // sq->generator(10000);
 
-    // cout << "---------sq2---------" << endl;
-    // ListSequence<unsigned int> *sq2 = new ListSequence<unsigned int>();
-    // sq2->generator(10);
-    // sq2->print();
-    // ListSorter<unsigned int> *sort2 = new ListSorter<unsigned int>();
-    // sort2->quickSort(sq2, ascending);
-    // sq2->print();
+    // auto start = high_resolution_clock::now();
+    // sort->shellSort(sq, ascending);
+
+    // auto stop = high_resolution_clock::now();
+    // auto duration = duration_cast<microseconds>(stop - start);
+    // cout << "Time taken by selection quick sorting: " << duration.count() << " microseconds\n";
+    sort->running_time(ascending);
     return 0;
 }
