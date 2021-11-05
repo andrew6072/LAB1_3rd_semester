@@ -70,7 +70,7 @@ public:
     }
 
     // MERGE
-    void merge(Sequence<T> *left, Sequence<T> *right, Sequence<T> *bars)
+    void merge(Sequence<T> *left, Sequence<T> *right, Sequence<T> *bars, bool (*function)(T data, T value))
     {
         unsigned int nL = left->getSize();
         unsigned int nR = right->getSize();
@@ -80,7 +80,7 @@ public:
 
         while (leftLoop < nL && rightLoop < nR)
         {
-            if (left->get(leftLoop) <= right->get(rightLoop))
+            if (function(left->get(leftLoop), right->get(rightLoop)))
             {
                 bars->set(left->get(leftLoop), i);
                 ++leftLoop;
@@ -106,7 +106,7 @@ public:
         }
     }
 
-    void mergeSort(Sequence<T> *bar)
+    void mergeSort(Sequence<T> *bar, bool (*function)(T data, T value))
     {
         if (bar->getSize() <= 1)
         {
@@ -127,12 +127,13 @@ public:
             right->push_back(bar->get(mid + j));
         }
 
-        mergeSort(left);
-        mergeSort(right);
-        merge(left, right, bar);
+        mergeSort(left, function);
+        mergeSort(right, function);
+        merge(left, right, bar, function);
     }
 };
 
+//LIST SEQUENCE
 template <class T>
 class ListSorter
 {

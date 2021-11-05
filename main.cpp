@@ -11,8 +11,8 @@ int main()
     sq->generator(100);
     sq->print();
     ArraySorter<unsigned int> *sort = new ArraySorter<unsigned int>();
-    sort->mergeSort(sq);
-    cout << "\nAfter\n"; 
+    sort->mergeSort(sq, descending);
+    cout << "\nAfter\n";
     sq->print();
 
     // cout << "---------sq2---------" << endl;
