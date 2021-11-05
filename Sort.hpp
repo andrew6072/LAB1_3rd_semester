@@ -18,6 +18,7 @@ template <class T>
 class ArraySorter
 {
 public:
+    // QUICK
     T partition(Sequence<T> *arr, unsigned int low, unsigned int high, bool (*function)(T data, T value))
     {
         T pivot;
@@ -52,21 +53,84 @@ public:
         _quickSort(arr, 0, arr->getSize() - 1, function);
     }
 
+    // SHELL
     void shellSort(Sequence<T> *arr, bool (*function)(T data, T value))
     {
         unsigned int n = arr->getSize();
-        for (unsigned int gap = n/2; gap>0; gap /= 2)
+        for (unsigned int gap = n / 2; gap > 0; gap /= 2)
         {
             for (unsigned int i = gap; i < n; i++)
             {
-                for (unsigned int j = gap; j >= gap && function(arr->get(j), arr->get(j-gap)) ;j -= gap)
+                for (unsigned int j = gap; j >= gap && function(arr->get(j), arr->get(j - gap)); j -= gap)
                 {
-                    arr->swap(j, j-gap);
+                    arr->swap(j, j - gap);
                 }
             }
         }
     }
 
+    // MERGE
+    void merge(Sequence<T> *left, Sequence<T> *right, Sequence<T> *bars)
+    {
+        unsigned int nL = left->getSize();
+        unsigned int nR = right->getSize();
+        unsigned int i = 0;
+        unsigned int leftLoop = 0;
+        unsigned int rightLoop = 0;
+
+        while (leftLoop < nL && rightLoop < nR)
+        {
+            if (left->get(leftLoop) <= right->get(rightLoop))
+            {
+                bars->set(left->get(leftLoop), i);
+                ++leftLoop;
+            }
+            else
+            {
+                bars->set(right->get(rightLoop), i);
+                ++rightLoop;
+            }
+            ++i;
+        }
+        while (leftLoop < nL)
+        {
+            bars->set(left->get(leftLoop), i);
+            ++leftLoop;
+            ++i;
+        }
+        while (rightLoop < nR)
+        {
+            bars->set(right->get(rightLoop), i);
+            ++rightLoop;
+            ++i;
+        }
+    }
+
+    void mergeSort(Sequence<T> *bar)
+    {
+        if (bar->getSize() <= 1)
+        {
+            return;
+        }
+
+        unsigned int mid = bar->getSize() / 2;
+        Sequence<T>* left = new ArraySequence<T>();
+        Sequence<T>* right = new ArraySequence<T>();
+
+        for (size_t j = 0; j < mid; ++j)
+        {
+            left->push_back(bar->get(j));
+        }
+
+        for (size_t j = 0; j < (bar->getSize()) - mid; ++j)
+        {
+            right->push_back(bar->get(mid + j));
+        }
+
+        mergeSort(left);
+        mergeSort(right);
+        merge(left, right, bar);
+    }
 };
 
 template <class T>
@@ -158,18 +222,18 @@ public:
     void shellSort(ListSequence<T> *list, bool (*function)(T data, T value))
     {
         
-    } 
+    }
 
 };
 
 template <class T>
 bool descending(T data, T value)
 {
-    return data > value;
+    return data >= value;
 }
 
 template <class T>
 bool ascending(T data, T value)
 {
-    return data < value;
+    return data <= value;
 }

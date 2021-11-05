@@ -8,18 +8,19 @@ using namespace std;
 int main()
 {
     Sequence<unsigned int> *sq = new ArraySequence<unsigned int>();
-    sq->generator(10);
+    sq->generator(100);
     sq->print();
     ArraySorter<unsigned int> *sort = new ArraySorter<unsigned int>();
-    sort->shellSort(sq, descending);
+    sort->mergeSort(sq);
+    cout << "\nAfter\n"; 
     sq->print();
 
-    cout << "---------sq2---------" << endl;
-    ListSequence<unsigned int> *sq2 = new ListSequence<unsigned int>();
-    sq2->generator(10);
-    sq2->print();
-    ListSorter<unsigned int> *sort2 = new ListSorter<unsigned int>();
-    sort2->quickSort(sq2, ascending);
-    sq2->print();
+    // cout << "---------sq2---------" << endl;
+    // ListSequence<unsigned int> *sq2 = new ListSequence<unsigned int>();
+    // sq2->generator(10);
+    // sq2->print();
+    // ListSorter<unsigned int> *sort2 = new ListSorter<unsigned int>();
+    // sort2->quickSort(sq2, ascending);
+    // sq2->print();
     return 0;
 }
