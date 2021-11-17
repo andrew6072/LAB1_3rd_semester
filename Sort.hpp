@@ -139,14 +139,14 @@ public:
     void running_time(bool (*function)(T data, T value))
     {
         ofstream myfile;
-        myfile.open("running_time_mergeSort.txt");
-        myfile << "Running time of Merge sorting: \n";
+        myfile.open("running_time_shellSort.txt");
+        myfile << "Running time of shell sorting: \n";
         for (int i = 10; i <= 10000; i += 100)
         {
             Sequence<T> *sequence = new ArraySequence<T>();
             sequence->generator(i);
             auto start = high_resolution_clock::now();
-            mergeSort(sequence, function);
+            shellSort(sequence, function);
             auto stop = high_resolution_clock::now();
             auto duration = duration_cast<microseconds>(stop - start);
             myfile << duration.count() << "\n";
@@ -168,6 +168,7 @@ public:
         return cur;
     }
 
+    // QUICK
     Node<T> *partition(Node<T> *head, Node<T> *end, Node<T> **newHead, Node<T> **newEnd, bool (*function)(T data, T value))
     {
         Node<T> *pivot = end;
@@ -236,6 +237,7 @@ public:
         return newHead;
     }
 
+    // SHELL
     void quickSort(ListSequence<T> *list, bool (*function)(T data, T value))
     {
         list->head = quickSortFunc(list->head, getTail(list->head), function);
@@ -243,6 +245,77 @@ public:
 
     void shellSort(ListSequence<T> *list, bool (*function)(T data, T value))
     {
+    }
+
+    // MERGE
+    void splitList(Node<T> *source, Node<T> **frontRef, Node<T> **backRef)
+    {
+        Node<T> *fast;
+        Node<T> *slow;
+        slow = source;
+        fast = source->next;
+
+        while (fast != NULL)
+        {
+            fast = fast->next;
+            if (fast != NULL)
+            {
+                slow = slow->next;
+                fast = fast->next;
+            }
+        }
+
+        *frontRef = source;
+        *backRef = slow->next;
+        slow->next = NULL;
+    }
+
+    Node<T> *SortedMerge(Node<T> *a, Node<T> *b, bool (*function)(T data, T value))
+    {
+        Node<T> *result = NULL;
+
+        if (a == NULL)
+        {
+            return (b);
+        }
+        else if (b == NULL)
+        {
+            return (a);
+        }
+
+        if (function(a->data, b->data))
+        {
+            result = a;
+            result->next = SortedMerge(a->next, b, function);
+        }
+        else
+        {
+            result = b;
+            result->next = SortedMerge(a, b->next, function);
+        }
+        return (result);
+    }
+
+    void mergeSortFunc(Node<T> **headRef, bool (*function)(T data, T value))
+    {
+        Node<T> *head = *headRef;
+        Node<T> *a;
+        Node<T> *b;
+        if ((head == NULL) || (head->next == NULL))
+        {
+            return;
+        }
+        splitList(head, &a, &b);
+        mergeSortFunc(&a, function);
+        mergeSortFunc(&b, function);
+        *headRef = SortedMerge(a, b, function);
+    }
+
+    void mergeSort(ListSequence<T> *myList, bool (*function)(T data, T value))
+    {
+        Node<T> *a = myList->getHead();
+        mergeSortFunc(&a, function);
+        myList->setHead(a);
     }
 };
 
