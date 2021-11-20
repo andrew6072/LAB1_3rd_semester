@@ -1,9 +1,12 @@
 #pragma once
 #include <iostream>
+#include <chrono>
+#include <fstream>
 #include "Sequence.hpp"
 #include "ArraySequence.hpp"
 #include "ListSequence.hpp"
 using namespace std;
+using namespace std::chrono;
 
 // template <class T>
 // class ISorter
@@ -18,12 +21,13 @@ template <class T>
 class ArraySorter
 {
 public:
-    T partition(Sequence<T> *arr, unsigned int low, unsigned int high, bool (*function)(T data, T value))
+    // QUICK
+    T partition(Sequence<T> *arr, int low, int high, bool (*function)(T data, T value))
     {
         T pivot;
         pivot = arr->get(high);
-        unsigned int i = low - 1;
-        for (unsigned int j = i + 1; j <= high - 1; j++)
+        int i = low - 1;
+        for (int j = i + 1; j <= high - 1; j++)
         {
             if (function(arr->get(j), pivot))
             {
@@ -36,7 +40,7 @@ public:
     }
 
     // const T& data,const T& value
-    void _quickSort(Sequence<T> *arr, unsigned int low, unsigned int high, bool (*function)(T data, T value)) // iterator
+    void _quickSort(Sequence<T> *arr, int low, int high, bool (*function)(T data, T value)) // iterator
     {
         if (low <= high)
         {
@@ -49,26 +53,108 @@ public:
 
     void quickSort(Sequence<T> *arr, bool (*function)(T data, T value))
     {
-        _quickSort(arr, 0, arr->getSize() - 1, function);
+        int n = arr->getSize();
+        _quickSort(arr, 0, n - 1, function);
     }
 
+    // SHELL
     void shellSort(Sequence<T> *arr, bool (*function)(T data, T value))
     {
-        unsigned int n = arr->getSize();
-        for (unsigned int gap = n/2; gap>0; gap /= 2)
+        int n = arr->getSize();
+        for (int gap = n / 2; gap > 0; gap /= 2)
         {
-            for (unsigned int i = gap; i < n; i++)
+            for (int i = gap; i < n; i++)
             {
-                for (unsigned int j = gap; j >= gap && function(arr->get(j), arr->get(j-gap)) ;j -= gap)
+                for (int j = gap; j >= gap && function(arr->get(j), arr->get(j - gap)); j -= gap)
                 {
-                    arr->swap(j, j-gap);
+                    arr->swap(j, j - gap);
                 }
             }
         }
     }
 
+    // MERGE
+    void merge(Sequence<T> *left, Sequence<T> *right, Sequence<T> *bars, bool (*function)(T data, T value))
+    {
+        int nL = left->getSize();
+        int nR = right->getSize();
+        int i = 0;
+        int leftLoop = 0;
+        int rightLoop = 0;
+
+        while (leftLoop < nL && rightLoop < nR)
+        {
+            if (function(left->get(leftLoop), right->get(rightLoop)))
+            {
+                bars->set(left->get(leftLoop), i);
+                ++leftLoop;
+            }
+            else
+            {
+                bars->set(right->get(rightLoop), i);
+                ++rightLoop;
+            }
+            ++i;
+        }
+        while (leftLoop < nL)
+        {
+            bars->set(left->get(leftLoop), i);
+            ++leftLoop;
+            ++i;
+        }
+        while (rightLoop < nR)
+        {
+            bars->set(right->get(rightLoop), i);
+            ++rightLoop;
+            ++i;
+        }
+    }
+
+    void mergeSort(Sequence<T> *bar, bool (*function)(T data, T value))
+    {
+        if (bar->getSize() <= 1)
+        {
+            return;
+        }
+
+        int mid = bar->getSize() / 2;
+        Sequence<T> *left = new ArraySequence<T>();
+        Sequence<T> *right = new ArraySequence<T>();
+
+        for (size_t j = 0; j < mid; ++j)
+        {
+            left->push_back(bar->get(j));
+        }
+
+        for (size_t j = 0; j < (bar->getSize()) - mid; ++j)
+        {
+            right->push_back(bar->get(mid + j));
+        }
+
+        mergeSort(left, function);
+        mergeSort(right, function);
+        merge(left, right, bar, function);
+    }
+
+    void running_time(bool (*function)(T data, T value))
+    {
+        ofstream myfile;
+        myfile.open("running_time_shellSort.txt");
+        myfile << "Running time of shell sorting: \n";
+        for (int i = 10; i <= 10000; i += 100)
+        {
+            Sequence<T> *sequence = new ArraySequence<T>();
+            sequence->generator(i);
+            auto start = high_resolution_clock::now();
+            shellSort(sequence, function);
+            auto stop = high_resolution_clock::now();
+            auto duration = duration_cast<microseconds>(stop - start);
+            myfile << duration.count() << "\n";
+        }
+    }
 };
 
+// LIST SEQUENCE
 template <class T>
 class ListSorter
 {
@@ -82,6 +168,7 @@ public:
         return cur;
     }
 
+    // QUICK
     Node<T> *partition(Node<T> *head, Node<T> *end, Node<T> **newHead, Node<T> **newEnd, bool (*function)(T data, T value))
     {
         Node<T> *pivot = end;
@@ -150,6 +237,7 @@ public:
         return newHead;
     }
 
+    // SHELL
     void quickSort(ListSequence<T> *list, bool (*function)(T data, T value))
     {
         list->head = quickSortFunc(list->head, getTail(list->head), function);
@@ -157,19 +245,88 @@ public:
 
     void shellSort(ListSequence<T> *list, bool (*function)(T data, T value))
     {
-        
-    } 
+    }
 
+    // MERGE
+    void splitList(Node<T> *source, Node<T> **frontRef, Node<T> **backRef)
+    {
+        Node<T> *fast;
+        Node<T> *slow;
+        slow = source;
+        fast = source->next;
+
+        while (fast != NULL)
+        {
+            fast = fast->next;
+            if (fast != NULL)
+            {
+                slow = slow->next;
+                fast = fast->next;
+            }
+        }
+
+        *frontRef = source;
+        *backRef = slow->next;
+        slow->next = NULL;
+    }
+
+    Node<T> *SortedMerge(Node<T> *a, Node<T> *b, bool (*function)(T data, T value))
+    {
+        Node<T> *result = NULL;
+
+        if (a == NULL)
+        {
+            return (b);
+        }
+        else if (b == NULL)
+        {
+            return (a);
+        }
+
+        if (function(a->data, b->data))
+        {
+            result = a;
+            result->next = SortedMerge(a->next, b, function);
+        }
+        else
+        {
+            result = b;
+            result->next = SortedMerge(a, b->next, function);
+        }
+        return (result);
+    }
+
+    void mergeSortFunc(Node<T> **headRef, bool (*function)(T data, T value))
+    {
+        Node<T> *head = *headRef;
+        Node<T> *a;
+        Node<T> *b;
+        if ((head == NULL) || (head->next == NULL))
+        {
+            return;
+        }
+        splitList(head, &a, &b);
+        mergeSortFunc(&a, function);
+        mergeSortFunc(&b, function);
+        *headRef = SortedMerge(a, b, function);
+    }
+
+    void mergeSort(ListSequence<T> *myList, bool (*function)(T data, T value))
+    {
+        Node<T> *a = myList->getHead();
+        mergeSortFunc(&a, function);
+        myList->setHead(a);
+    }
 };
 
 template <class T>
 bool descending(T data, T value)
 {
-    return data > value;
+    return data >= value;
 }
 
 template <class T>
 bool ascending(T data, T value)
 {
-    return data < value;
+    return data <= value;
 }

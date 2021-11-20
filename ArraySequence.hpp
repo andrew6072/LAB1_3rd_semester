@@ -8,8 +8,8 @@ class ArraySequence : public Sequence<T>
 {
 private:
     T *data;
-    int size;
-    int capacity = 8;
+     int size;
+     int capacity = 8;
 
 public:
     ArraySequence<T>()
@@ -35,12 +35,12 @@ public:
         delete[] data;
     }
 
-    void setSize(unsigned int size) override
+    void setSize( int size) override
     {
         this->size = size;
     }
 
-    unsigned int getSize() const override
+     int getSize() const override
     {
         return size;
     }
@@ -76,12 +76,12 @@ public:
         return size == 0;
     }
 
-    bool IndexIsValid(unsigned int index)
+    bool IndexIsValid( int index)
     {
         return (index <= size && index >= 0);
     }
 
-    T get(unsigned int index) override
+    T get( int index) override
     {
         if (IndexIsValid(index))
         {
@@ -106,9 +106,9 @@ public:
     {
         if (size == capacity)
         {
-            unsigned int new_cap = capacity * 2;
+             int new_cap = capacity * 2;
             T *new_arr = new T[new_cap];
-            for (unsigned int i = 0; i < size; i++)
+            for ( int i = 0; i < size; i++)
             {
                 new_arr[i] = data[i];
             }
@@ -127,7 +127,7 @@ public:
             capacity *= 2;
         }
         T *new_arr = new T[capacity];
-        for (unsigned int i = 0; i < size; i++)
+        for ( int i = 0; i < size; i++)
         {
             new_arr[i + 1] = data[i];
         }
@@ -137,7 +137,7 @@ public:
         size++;
     }
 
-    void insertAt(T item, unsigned int index) override
+    void insertAt(T item,  int index) override
     {
         if (isEmpty())
         {
@@ -163,7 +163,7 @@ public:
                 {
                     T *new_arr = new T[capacity];
                     copy(data, data + index, new_arr);
-                    for (unsigned int i = index; i < size; i++)
+                    for ( int i = index; i < size; i++)
                     {
                         new_arr[i + 1] = data[i];
                     }
@@ -180,7 +180,7 @@ public:
         }
     }
 
-    void deleteAt(unsigned int index) override
+    void deleteAt( int index) override
     {
         if (isEmpty())
         {
@@ -196,7 +196,7 @@ public:
             {
                 T *new_arr = new T[capacity];
                 copy(data, data + index, new_arr);
-                for (unsigned int i = index; i < size; i++)
+                for ( int i = index; i < size; i++)
                 {
                     new_arr[i] = data[i+1];
                 }
@@ -239,14 +239,14 @@ public:
 
     Sequence<T> *con_cate(Sequence<T> *sequence) override
     {
-        for (unsigned int i = 0; i < size; i++)
+        for ( int i = 0; i < size; i++)
         {
             sequence->push_back(data[i]);
         }
         return sequence;
     }
 
-    Sequence<T> *subSequence(unsigned int start, unsigned int end) override
+    Sequence<T> *subSequence( int start,  int end) override
     {
         if (isEmpty())
         {
@@ -258,7 +258,7 @@ public:
             if (IndexIsValid(start) && IndexIsValid(end) && start <= end)
             {
                 Sequence<T> *sub_sequence = new ArraySequence<T>();
-                for (unsigned int i = start; i <= end; i++)
+                for ( int i = start; i <= end; i++)
                 {
                     sub_sequence->push_back(data[i]);
                 }
@@ -278,7 +278,7 @@ public:
             return false;
         else
         {
-            for (unsigned int i = 0; i < size; i++)
+            for ( int i = 0; i < size; i++)
             {
                 if (item == data[i])
                 {
@@ -291,7 +291,7 @@ public:
 
     void map(T (*function)(T data, T option), T option) override
     {
-        for (unsigned int i = 0; i < size; ++i)
+        for ( int i = 0; i < size; ++i)
         {
             data[i] = function(data[i], option);
         }
@@ -300,8 +300,8 @@ public:
     void where(bool (*function)(T data, T option), T option) override
     {
         T *new_array = new T[capacity];
-        unsigned int j = 0;
-        for (unsigned int i = 0; i < size; i++)
+         int j = 0;
+        for ( int i = 0; i < size; i++)
         {
             if (function(data[i], option))
             {
@@ -322,7 +322,7 @@ public:
         }
         else
         {
-            for (unsigned int i = 0; i < size; i++)
+            for ( int i = 0; i < size; i++)
             {
                 cout << "| " << data[i] << " ";
             }

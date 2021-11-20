@@ -20,7 +20,7 @@ class ListSequence : public Sequence<T>
 {
 public:
     Node<T> *head;
-    unsigned int size;
+    int size;
 
 public:
     ListSequence()
@@ -44,13 +44,22 @@ public:
     // {
     //     return this->head;
     // }
+    Node<T> *getHead()
+    {
+        return this->head;
+    }
 
-    void setSize(unsigned int size) override
+    void setHead(Node<T> *new_head)
+    {
+        this->head = new_head;
+    }
+
+    void setSize(int size) override
     {
         this->size = size;
     }
 
-    unsigned int getSize() const override
+    int getSize() const override
     {
         return size;
     }
@@ -90,12 +99,12 @@ public:
             return false;
     }
 
-    bool IndexIsValid(unsigned int index)
+    bool IndexIsValid(int index)
     {
         return (index <= size && index >= 0);
     }
 
-    T get(unsigned int index) override
+    T get(int index) override
     {
         if (isEmpty())
         {
@@ -107,7 +116,7 @@ public:
             if (IndexIsValid(index))
             {
                 Node<T> *p = head;
-                unsigned int i = 0;
+                int i = 0;
                 while (i < index)
                 {
                     p = p->next;
@@ -159,7 +168,7 @@ public:
         }
     }
 
-    void insertAt(T item, unsigned int index) override
+    void insertAt(T item, int index) override
     {
         if (isEmpty())
         {
@@ -180,7 +189,7 @@ public:
                 else
                 {
                     Node<T> *new_node = new Node<T>(item);
-                    unsigned int i = 0;
+                    int i = 0;
                     Node<T> *p = head;
                     while (i < index - 1)
                     {
@@ -200,7 +209,7 @@ public:
         }
     }
 
-    void deleteAt(unsigned int index) override
+    void deleteAt(int index) override
     {
         if (isEmpty())
         {
@@ -217,7 +226,7 @@ public:
                 }
                 else
                 {
-                    unsigned int i = 0;
+                    int i = 0;
                     Node<T> *p = head;
                     while (i < index - 1)
                     {
@@ -287,7 +296,7 @@ public:
         return sequence;
     }
 
-    Sequence<T> *subSequence(unsigned int start, unsigned int end)
+    Sequence<T> *subSequence(int start, int end)
     {
         if (isEmpty())
         {
@@ -300,7 +309,7 @@ public:
             {
                 Node<T> *p = head;
                 Sequence<T> *sub_seq = new ListSequence<T>();
-                unsigned int i = 0;
+                int i = 0;
                 while (p != nullptr)
                 {
                     if (i >= start && i <= end)
@@ -334,7 +343,7 @@ public:
     {
         // Add condition when your data is empty
         Node<T> *p = head;
-        for (unsigned int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++)
         {
             p->data = function(p->data, value);
             p = p->next;

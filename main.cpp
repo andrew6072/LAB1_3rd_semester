@@ -1,25 +1,34 @@
 #include <iostream>
+#include <chrono>
 #include "Sequence.hpp"
 #include "ArraySequence.hpp"
 #include "ListSequence.hpp"
 #include "Sort.hpp"
 using namespace std;
+using namespace std::chrono;
 
 int main()
 {
-    Sequence<unsigned int> *sq = new ArraySequence<unsigned int>();
-    sq->generator(10);
-    sq->print();
-    ArraySorter<unsigned int> *sort = new ArraySorter<unsigned int>();
-    sort->shellSort(sq, descending);
-    sq->print();
+    // Sequence<int> *sq = new ListSequence<int>();
+    // ArraySorter<int> *sort = new ArraySorter<int>();
+    //  sq->generator(10000);
 
-    cout << "---------sq2---------" << endl;
-    ListSequence<unsigned int> *sq2 = new ListSequence<unsigned int>();
-    sq2->generator(10);
-    sq2->print();
-    ListSorter<unsigned int> *sort2 = new ListSorter<unsigned int>();
-    sort2->quickSort(sq2, ascending);
-    sq2->print();
-    return 0;
+    // auto start = high_resolution_clock::now();
+    // sort->shellSort(sq, ascending);
+
+    // auto stop = high_resolution_clock::now();
+    // auto duration = duration_cast<microseconds>(stop - start);
+    // cout << "Time taken by selection quick sorting: " << duration.count() << " microseconds\n";
+    // sort->running_time(ascending);
+    ListSequence<int> *myList = new ListSequence<int>();
+    myList->push_back(1);
+    myList->push_back(7);
+    myList->push_back(2);
+    myList->push_back(8);
+    myList->push_back(3);
+    myList->push_back(9);
+    myList->print();
+    ListSorter<int> *listSort = new ListSorter<int>();
+    listSort->mergeSort(myList, descending);
+    myList->print();
 }
