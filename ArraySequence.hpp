@@ -8,8 +8,8 @@ class ArraySequence : public Sequence<T>
 {
 private:
     T *data;
-     int size;
-     int capacity = 8;
+    int size;
+    int capacity = 8;
 
 public:
     ArraySequence<T>()
@@ -35,12 +35,12 @@ public:
         delete[] data;
     }
 
-    void setSize( int size) override
+    void setSize(int size) override
     {
         this->size = size;
     }
 
-     int getSize() const override
+    int getSize() const override
     {
         return size;
     }
@@ -76,12 +76,12 @@ public:
         return size == 0;
     }
 
-    bool IndexIsValid( int index)
+    bool IndexIsValid(int index)
     {
         return (index <= size && index >= 0);
     }
 
-    T get( int index) override
+    T get(int index) override
     {
         if (IndexIsValid(index))
         {
@@ -102,13 +102,13 @@ public:
         }
     }
 
-    void push_back(T item) override
+    void push_back(const T& item) override
     {
         if (size == capacity)
         {
-             int new_cap = capacity * 2;
+            int new_cap = capacity * 2;
             T *new_arr = new T[new_cap];
-            for ( int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
                 new_arr[i] = data[i];
             }
@@ -120,14 +120,14 @@ public:
         size++;
     }
 
-    void push_front(T item) override
+    void push_front(const T& item) override
     {
         if (size == capacity)
         {
             capacity *= 2;
         }
         T *new_arr = new T[capacity];
-        for ( int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++)
         {
             new_arr[i + 1] = data[i];
         }
@@ -137,7 +137,7 @@ public:
         size++;
     }
 
-    void insertAt(T item,  int index) override
+    void insertAt(const T& item, int index) override
     {
         if (isEmpty())
         {
@@ -163,7 +163,7 @@ public:
                 {
                     T *new_arr = new T[capacity];
                     copy(data, data + index, new_arr);
-                    for ( int i = index; i < size; i++)
+                    for (int i = index; i < size; i++)
                     {
                         new_arr[i + 1] = data[i];
                     }
@@ -180,7 +180,7 @@ public:
         }
     }
 
-    void deleteAt( int index) override
+    void deleteAt(int index) override
     {
         if (isEmpty())
         {
@@ -196,9 +196,9 @@ public:
             {
                 T *new_arr = new T[capacity];
                 copy(data, data + index, new_arr);
-                for ( int i = index; i < size; i++)
+                for (int i = index; i < size; i++)
                 {
-                    new_arr[i] = data[i+1];
+                    new_arr[i] = data[i + 1];
                 }
                 delete[] data;
                 data = new_arr;
@@ -239,14 +239,14 @@ public:
 
     Sequence<T> *con_cate(Sequence<T> *sequence) override
     {
-        for ( int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++)
         {
             sequence->push_back(data[i]);
         }
         return sequence;
     }
 
-    Sequence<T> *subSequence( int start,  int end) override
+    Sequence<T> *subSequence(int start, int end) override
     {
         if (isEmpty())
         {
@@ -258,7 +258,7 @@ public:
             if (IndexIsValid(start) && IndexIsValid(end) && start <= end)
             {
                 Sequence<T> *sub_sequence = new ArraySequence<T>();
-                for ( int i = start; i <= end; i++)
+                for (int i = start; i <= end; i++)
                 {
                     sub_sequence->push_back(data[i]);
                 }
@@ -272,13 +272,15 @@ public:
         }
     }
 
-    bool search(T item) override
+    bool search(const T& item) override
     {
         if (isEmpty())
+        {
             return false;
+        }
         else
         {
-            for ( int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
                 if (item == data[i])
                 {
@@ -289,19 +291,19 @@ public:
         }
     }
 
-    void map(T (*function)(T data, T option), T option) override
+    void map(T (*function)(const T& data, const T& option), const T& option) override
     {
-        for ( int i = 0; i < size; ++i)
+        for (int i = 0; i < size; ++i)
         {
             data[i] = function(data[i], option);
         }
     }
 
-    void where(bool (*function)(T data, T option), T option) override
+    void where(bool (*function)(const T& data, const T& option), const T& option) override
     {
         T *new_array = new T[capacity];
-         int j = 0;
-        for ( int i = 0; i < size; i++)
+        int j = 0;
+        for (int i = 0; i < size; i++)
         {
             if (function(data[i], option))
             {
@@ -322,7 +324,7 @@ public:
         }
         else
         {
-            for ( int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
             {
                 cout << "| " << data[i] << " ";
             }

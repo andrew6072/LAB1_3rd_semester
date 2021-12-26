@@ -44,6 +44,7 @@ public:
     // {
     //     return this->head;
     // }
+
     Node<T> *getHead()
     {
         return this->head;
@@ -132,7 +133,7 @@ public:
         }
     }
 
-    void push_back(T item) override
+    void push_back(const T& item) override
     {
         Node<T> *new_node = new Node<T>(item);
         if (head == nullptr)
@@ -152,7 +153,7 @@ public:
         }
     }
 
-    void push_front(T item) override
+    void push_front(const T& item) override
     {
         Node<T> *new_node = new Node<T>(item);
         if (head == nullptr)
@@ -168,7 +169,7 @@ public:
         }
     }
 
-    void insertAt(T item, int index) override
+    void insertAt(const T& item, int index) override
     {
         if (isEmpty())
         {
@@ -325,7 +326,7 @@ public:
         return nullptr;
     }
 
-    bool search(T key) override
+    bool search(const T& key) override
     {
         Node<T> *current = this->head;
         while (current)
@@ -339,7 +340,7 @@ public:
         return false;
     }
 
-    void map(T (*function)(T data, T value), T value) override
+    void map(T (*function)(const T& data, const T& value), const T& value) override
     {
         // Add condition when your data is empty
         Node<T> *p = head;
@@ -350,7 +351,7 @@ public:
         }
     }
 
-    void where(bool (*function)(T data, T value), T value) override
+    void where(bool (*function)(const T& data, const T& value), const T& value) override
     {
         Node<T> *cur = head;
         Node<T> *pre = nullptr;
